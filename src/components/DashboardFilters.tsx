@@ -1,4 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface DashboardFiltersProps {
   searchTerm: string;
@@ -39,54 +47,58 @@ export default function DashboardFilters({
         className="flex h-9 w-[250px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       />
 
-      <select
-        value={categoryFilter}
-        onChange={(e) => onCategoryChange(e.target.value)}
-        className="flex h-9 w-[150px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-      >
-        <option value="all">All Categories</option>
-        <option value="spam/phishing">Spam/Phishing</option>
-        <option value="social">Social</option>
-        <option value="newsletter">Newsletter</option>
-        <option value="offers">Offers</option>
-        <option value="billing/invoices">Billing/Invoices</option>
-        <option value="work/professional">Work/Professional</option>
-        <option value="personal">Personal</option>
-        <option value="calendar/events">Calendar/Events</option>
-        <option value="e-commerce">E-commerce</option>
-        <option value="alerts">Alerts</option>
-        <option value="other">Other</option>
-      </select>
+      <Select value={categoryFilter} onValueChange={(v) => onCategoryChange(v as string)}>
+        <SelectTrigger className="w-[180px] bg-background shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+          <SelectValue placeholder="Category" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Categories</SelectItem>
+          <SelectItem value="spam/phishing">Spam/Phishing</SelectItem>
+          <SelectItem value="social">Social</SelectItem>
+          <SelectItem value="newsletter">Newsletter</SelectItem>
+          <SelectItem value="offers">Offers</SelectItem>
+          <SelectItem value="billing/invoices">Billing/Invoices</SelectItem>
+          <SelectItem value="work/professional">Work/Professional</SelectItem>
+          <SelectItem value="personal">Personal</SelectItem>
+          <SelectItem value="calendar/events">Calendar/Events</SelectItem>
+          <SelectItem value="e-commerce">E-commerce</SelectItem>
+          <SelectItem value="alerts">Alerts</SelectItem>
+          <SelectItem value="other">Other</SelectItem>
+        </SelectContent>
+      </Select>
 
-      <select
-        value={urgencyFilter}
-        onChange={(e) => onUrgencyChange(e.target.value)}
-        className="flex h-9 w-[150px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-      >
-        <option value="all">Any Urgency</option>
-        <option value="high">High & Critical</option>
-      </select>
+      <Select value={urgencyFilter} onValueChange={(v) => onUrgencyChange(v as string)}>
+        <SelectTrigger className="w-[160px] bg-background shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+          <SelectValue placeholder="Urgency" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Any Urgency</SelectItem>
+          <SelectItem value="high">High & Critical</SelectItem>
+        </SelectContent>
+      </Select>
 
-      <label className="flex items-center gap-2 text-sm cursor-pointer select-none text-muted-foreground hover:text-foreground">
-        <input
-          type="checkbox"
+      <label className="flex items-center gap-2 text-sm cursor-pointer select-none text-muted-foreground hover:text-foreground font-medium transition-colors">
+        <Checkbox
           checked={urgentReplyOnly}
-          onChange={(e) => onUrgentReplyChange(e.target.checked)}
-          className="rounded border-input text-primary focus:ring-ring cursor-pointer"
+          onCheckedChange={(checked) => onUrgentReplyChange(checked as boolean)}
         />
         Needs Reply
       </label>
 
       <div className="flex-1" />
 
-      <select
+      <Select
         value={sortField}
-        onChange={(e) => onSortFieldChange(e.target.value as "date" | "urgency")}
-        className="flex h-9 w-[140px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        onValueChange={(v) => onSortFieldChange(v as "date" | "urgency")}
       >
-        <option value="date">Sort by Date</option>
-        <option value="urgency">Sort by Urgency</option>
-      </select>
+        <SelectTrigger className="w-[150px] bg-background shadow-sm hover:bg-accent hover:text-accent-foreground transition-colors">
+          <SelectValue placeholder="Sort By" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="date">Sort by Date</SelectItem>
+          <SelectItem value="urgency">Sort by Urgency</SelectItem>
+        </SelectContent>
+      </Select>
 
       <Button
         variant="outline"
