@@ -12,13 +12,22 @@ This project demonstrates how to handle continuous background synchronization of
 - **Dynamic Dashboard:** A comprehensive UI built with shadcn/ui and TailwindCSS that allows filtering, sorting, and viewing metrics (time taken, cost of classification) in real-time as background tasks run.
 - **Resilient Workers:** The background analysis worker dynamically processes emails as they arrive without dropping state, ensuring every email is analyzed even if synchronization is throttled.
 
-## 💼 Practical Use Cases & CRM Integration
+## 💼 Practical Use Cases
 
-For Small to Medium-sized Businesses (SMBs), an overflowing inbox can be a goldmine of untapped opportunities or unwanted noise. This application can serve as a foundation for a powerful **Lead Generation and CRM tool**:
+For Small to Medium-sized Businesses (SMBs), an overflowing inbox can be a goldmine of untapped opportunities or unwanted noise. This application can serve as a foundation for various vital business operations:
 
+### Lead Generation & CRM Integration
 - **Automated Lead Discovery:** By tweaking the classification criterias, the AI can be instructed to specifically identify "Potential Leads" or "Sales Inquiries" from incoming emails, separating high-value prospects from general noise.
 - **Sentiment & Intent Analysis:** The AI model can analyze the tone of the email to gauge a potential customer's purchase intent or urgency, allowing sales teams to prioritize follow-ups on "hot" leads.
 - **CRM Integration:** With slight modifications, this system can be integrated directly into a CRM platform. Once a lead is identified, the backend could automatically create a new contact profile, log the communication history, and assign a task to a sales representative.
+
+### Customer Support & Helpdesk Triage
+- **Automated Routing:** Instead of leads, the AI can categorize incoming customer emails by issue type (e.g., Billing, Technical Support, Feature Request, Complaints).
+- **Urgency Escalation:** It can instantly flag angry or highly frustrated customers (sentiment analysis) or critical issues (e.g., "server down"), bumping them to the top of the queue or sending an instant Slack alert to a manager.
+
+### HR & Applicant Tracking
+- **Resume Sorting:** For companies with a generic careers@ inbox, the AI can instantly separate job applications from vendor pitches or spam.
+- **Candidate Triage:** It could even be prompted to categorize applicants by the role they are applying for based on the email body, saving recruiters hours of manual sorting.
 
 ## ⚡ Why System One Models?
 
