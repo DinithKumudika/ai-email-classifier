@@ -7,36 +7,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useDashboard } from "@/contexts/DashboardContext";
 
-interface DashboardFiltersProps {
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
-  categoryFilter: string;
-  onCategoryChange: (value: string) => void;
-  urgencyFilter: string;
-  onUrgencyChange: (value: string) => void;
-  urgentReplyOnly: boolean;
-  onUrgentReplyChange: (value: boolean) => void;
-  sortField: "date" | "urgency";
-  onSortFieldChange: (value: "date" | "urgency") => void;
-  sortOrder: "asc" | "desc";
-  onSortOrderChange: (value: "asc" | "desc") => void;
-}
+export default function DashboardFilters() {
+  const {
+    searchTerm,
+    setSearchTerm: onSearchChange,
+    categoryFilter,
+    setCategoryFilter: onCategoryChange,
+    urgencyFilter,
+    setUrgencyFilter: onUrgencyChange,
+    urgentReplyOnly,
+    setUrgentReplyOnly: onUrgentReplyChange,
+    sortField,
+    setSortField: onSortFieldChange,
+    sortOrder,
+    setSortOrder: onSortOrderChange,
+  } = useDashboard();
 
-export default function DashboardFilters({
-  searchTerm,
-  onSearchChange,
-  categoryFilter,
-  onCategoryChange,
-  urgencyFilter,
-  onUrgencyChange,
-  urgentReplyOnly,
-  onUrgentReplyChange,
-  sortField,
-  onSortFieldChange,
-  sortOrder,
-  onSortOrderChange,
-}: DashboardFiltersProps) {
   return (
     <div className="flex flex-wrap gap-4 items-center bg-muted/20 border border-border rounded-xl p-3">
       <input

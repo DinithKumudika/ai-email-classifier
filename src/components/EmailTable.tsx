@@ -9,24 +9,20 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import UrgencyIndicator from "./UrgencyIndicator";
-import { Email } from "./EmailDetailPane";
 import { Card } from "@/components/ui/card";
+import { useDashboard } from "@/contexts/DashboardContext";
 
-interface EmailTableProps {
-  filteredEmails: Email[];
-  totalEmailsCount: number;
-  loadingEmails: boolean;
-  selectedEmail: Email | null;
-  onSelectEmail: (email: Email) => void;
-}
+export default function EmailTable() {
+  const {
+    filteredAndSortedEmails: filteredEmails,
+    emails,
+    loadingEmails,
+    selectedEmail,
+    setSelectedEmail: onSelectEmail,
+  } = useDashboard();
+  
+  const totalEmailsCount = emails.length;
 
-export default function EmailTable({
-  filteredEmails,
-  totalEmailsCount,
-  loadingEmails,
-  selectedEmail,
-  onSelectEmail,
-}: EmailTableProps) {
   return (
     <Card className="flex-1 overflow-hidden flex flex-col shadow-sm">
       {loadingEmails && totalEmailsCount === 0 ? (

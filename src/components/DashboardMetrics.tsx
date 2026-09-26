@@ -1,34 +1,24 @@
 import { Button } from "@/components/ui/button";
+import { useDashboard } from "@/contexts/DashboardContext";
 
-interface DashboardMetricsProps {
-  emailsCount: number;
-  classifiedCount: number;
-  totalTimeMs: number;
-  totalCost: number;
-  avgTimeMs: number;
-  loadingEmails: boolean;
-  isInitialSyncCompleted: boolean;
-  totalInboxEmails: number;
-  isClassifying: boolean;
-  isRateLimited?: boolean;
-  onStartClassification: () => void;
-  onStopClassification: () => void;
-}
+export default function DashboardMetrics() {
+  const {
+    emails,
+    classifiedCount,
+    totalTimeMs,
+    totalCost,
+    avgTimeMs,
+    loadingEmails,
+    isInitialSyncCompleted,
+    totalInboxEmails,
+    isClassifying,
+    isRateLimited,
+    startClassification: onStartClassification,
+    stopClassification: onStopClassification,
+  } = useDashboard();
 
-export default function DashboardMetrics({
-  emailsCount,
-  classifiedCount,
-  totalTimeMs,
-  totalCost,
-  avgTimeMs,
-  loadingEmails,
-  isInitialSyncCompleted,
-  totalInboxEmails,
-  isClassifying,
-  isRateLimited,
-  onStartClassification,
-  onStopClassification,
-}: DashboardMetricsProps) {
+  const emailsCount = emails.length;
+
   return (
     <div className="flex items-center justify-between bg-muted/30 border border-border rounded-xl p-4">
       <div className="flex items-center gap-8 px-4">
