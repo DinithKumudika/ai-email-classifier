@@ -96,9 +96,9 @@ The response includes the `noul` value. Typically, a value `> 0.5` is interprete
 ```
 
 ### Type 3: `score`
-Use `score` when you want the model to evaluate or rate the state on a numerical scale based on your instructions.
+Use `score` when you want the model to evaluate or rate the state on a numerical scale based on your instructions. You can define the scale purely in the `instructions`, or optionally provide a `criteria` array of string labels (which will map to a 0-indexed numerical score based on the array length).
 
-**Request Example:**
+**Request Example (Implicit Scale):**
 ```json
 {
   "model": "~typesafe/jev-latest",
@@ -107,6 +107,21 @@ Use `score` when you want the model to evaluate or rate the state on a numerical
     "bug_severity": {
       "type": "score",
       "instructions": "Score the severity of the bug described in the text on a scale from 1 (minor annoyance) to 10 (critical system failure)."
+    }
+  }
+}
+```
+
+**Request Example (Explicit Criteria Array):**
+```json
+{
+  "model": "~typesafe/jev-latest",
+  "state": "The new feature is okay, but it crashes sometimes when I click the save button. The UI looks nice though.",
+  "questions": {
+    "urgency": {
+      "type": "score",
+      "instructions": "Score the priority of this email. Use Lowest for junk, and Critical for urgent action required.",
+      "criteria": ["Lowest", "Low", "Medium", "High", "Critical"]
     }
   }
 }
