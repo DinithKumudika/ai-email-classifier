@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Dashboard from "@/components/Dashboard";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export default function Home() {
   const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if ((session as any)?.error === "RefreshAccessTokenError") {
+      signIn("google"); // Force sign in to resolve error
+    }
+  }, [session]);
 
   if (status === "loading") {
     return (

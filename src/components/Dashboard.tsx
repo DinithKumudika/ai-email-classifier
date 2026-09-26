@@ -160,29 +160,56 @@ export default function Dashboard() {
           return { success: true, cost: 0 }; // Already classified
         }
 
-        try {
-          const res = await fetch("/api/classify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, runId }),
-            signal: abortControllerRef.current?.signal,
-          });
+        let retries = 0;
+        const maxRetries = 5;
+        let delay = 2000; // 2 seconds initial
 
-          if (res.ok) {
-            const classification = await res.json();
-            setEmails((prev) => {
-              const next = [...prev];
-              next[actualIndex] = { ...next[actualIndex], classification };
-              return next;
+        while (retries <= maxRetries) {
+          try {
+            const res = await fetch("/api/classify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, runId }),
+              signal: abortControllerRef.current?.signal,
             });
-            return { success: true, cost: classification.cost || 0 };
-          }
-        } catch (e: any) {
-          if (e.name !== "AbortError") {
+
+            if (res.ok) {
+              const classification = await res.json();
+              setEmails((prev) => {
+                const next = [...prev];
+                next[actualIndex] = { ...next[actualIndex], classification };
+                return next;
+              });
+              return { success: true, cost: classification.cost || 0 };
+            }
+
+            // Check if it's a rate limit or overloaded error
+            if (res.status === 429 || res.status === 529) {
+              if (retries === maxRetries) break; // Exhausted retries
+              
+              console.warn(`Classification rate limited (Status: ${res.status}). Retrying email ${email.id} in ${delay}ms...`);
+              
+              // Wait before retrying
+              await new Promise((resolve) => setTimeout(resolve, delay));
+              
+              retries++;
+              delay *= 2; // Exponential backoff
+              continue;
+            }
+            
+            // If it's a different error (e.g. 500, 400), don't retry, just break
+            break;
+
+          } catch (e: any) {
+            if (e.name === "AbortError") {
+               return { success: false, cost: 0 }; // User stopped classification
+            }
+            
             console.error("Failed to classify email", email.id, e);
+            break; // Network error or something else, don't infinitely retry
           }
-          return { success: false, cost: 0 };
         }
+
         return { success: false, cost: 0 };
       });
 
