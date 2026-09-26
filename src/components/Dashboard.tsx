@@ -2,7 +2,7 @@
 
 import { signOut } from "next-auth/react";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import EmailDetailPane, { Email } from "./EmailDetailPane";
 import InitialSyncScreen from "./InitialSyncScreen";
 import DashboardMetrics from "./DashboardMetrics";
@@ -246,59 +246,69 @@ export default function Dashboard() {
 
   const avgTimeMs = classifiedCount > 0 ? totalTimeMs / classifiedCount : 0;
 
-  const filteredAndSortedEmails = emails
-    .filter((email) => {
-      // 1. Search Term (Subject or Sender)
-      if (searchTerm) {
-        const term = searchTerm.toLowerCase();
-        const matchesSubject = email.subject?.toLowerCase().includes(term);
-        const matchesSender = email.from?.toLowerCase().includes(term);
-        if (!matchesSubject && !matchesSender) return false;
-      }
-      
-      // 2. Category Filter
-      if (categoryFilter !== "all") {
-        if (email.classification?.category?.value !== categoryFilter) return false;
-      }
-
-      // 3. Urgency Filter
-      if (urgencyFilter !== "all") {
-        const scoreStr = email.classification?.urgency?.value;
-        if (!scoreStr || scoreStr === "N/A") return false;
+  const filteredAndSortedEmails = useMemo(() => {
+    return emails
+      .filter((email) => {
+        // 1. Search Term (Subject or Sender)
+        if (searchTerm) {
+          const term = searchTerm.toLowerCase();
+          const matchesSubject = email.subject?.toLowerCase().includes(term);
+          const matchesSender = email.from?.toLowerCase().includes(term);
+          if (!matchesSubject && !matchesSender) return false;
+        }
         
-        const score = parseInt(scoreStr.split("/")[0], 10);
-        const max = parseInt(scoreStr.split("/")[1], 10) || 5;
-        const ratio = score / max;
-        // High is 4/5 (0.8), Critical is 5/5 (1.0). So >= 0.8
-        if (urgencyFilter === "high" && ratio < 0.8) return false;
-      }
+        // 2. Category Filter
+        if (categoryFilter !== "all") {
+          if (email.classification?.category?.value !== categoryFilter) return false;
+        }
 
-      // 4. Urgent Reply Only
-      if (urgentReplyOnly) {
-        if (email.classification?.isUrgentReply?.value !== true) return false;
-      }
-
-      return true;
-    })
-    .sort((a, b) => {
-      if (sortField === "date") {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-      } else if (sortField === "urgency") {
-        const getScore = (e: Email) => {
-          const scoreStr = e.classification?.urgency?.value;
-          if (!scoreStr || scoreStr === "N/A") return -1;
+        // 3. Urgency Filter
+        if (urgencyFilter !== "all") {
+          const scoreStr = email.classification?.urgency?.value;
+          if (!scoreStr || scoreStr === "N/A") return false;
+          
           const score = parseInt(scoreStr.split("/")[0], 10);
           const max = parseInt(scoreStr.split("/")[1], 10) || 5;
-          return score / max;
-        };
-        const scoreA = getScore(a);
-        const scoreB = getScore(b);
-        return sortOrder === "asc" ? scoreA - scoreB : scoreB - scoreA;
-      }
-      return 0;
-    });
+          const ratio = score / max;
+          // High is 4/5 (0.8), Critical is 5/5 (1.0). So >= 0.8
+          if (urgencyFilter === "high" && ratio < 0.8) return false;
+        }
+
+        // 4. Urgent Reply Only
+        if (urgentReplyOnly) {
+          if (email.classification?.isUrgentReply?.value !== true) return false;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortField === "date") {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+        } else if (sortField === "urgency") {
+          const getScore = (e: Email) => {
+            const scoreStr = e.classification?.urgency?.value;
+            if (!scoreStr || scoreStr === "N/A") return -1;
+            const score = parseInt(scoreStr.split("/")[0], 10);
+            const max = parseInt(scoreStr.split("/")[1], 10) || 5;
+            return score / max;
+          };
+          const scoreA = getScore(a);
+          const scoreB = getScore(b);
+          return sortOrder === "asc" ? scoreA - scoreB : scoreB - scoreA;
+        }
+        return 0;
+      });
+  }, [
+    emails,
+    searchTerm,
+    categoryFilter,
+    urgencyFilter,
+    urgentReplyOnly,
+    sortField,
+    sortOrder
+  ]);
 
   if (!isInitialSyncCompleted) {
     return (
